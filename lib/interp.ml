@@ -27,7 +27,7 @@ let rec interp_exp (program: s_exp): value =
         | Number n -> Number (n - 1)
         | _ -> raise (BadExpression e)
     )
-    | Lst [Sym "not"; arg] ->
+    | Lst [Sym "not"; arg] -> (* only boolean false can be true, else false *)
         if interp_exp arg = Boolean false then Boolean true else Boolean false
     | Lst [Sym "zero?"; arg] ->
         if interp_exp arg = (Number 0) then Boolean true else Boolean false
