@@ -5,18 +5,24 @@ open Interp
 exception BadExpression of s_exp
 
 let num_shift = 2
-let num_mask = 0b11
-let num_tag = 0b00
+let num_mask = 0b11 (* masking is and *)
+(* 0b1010 & 0b11 = 0b0010 => does not match num tag -> not number *)
+(* 0b0100 & 0b11 = 0b0000 => match num tag -> number *)
+let num_tag = 0b00 
 
 let bool_shift = 7
 let bool_mask = 0b1111111
 let bool_tag = 0b0011111
+(* True:  0b 1001 1111 *)
+(* False: 0b 0001 1111 *)
+
 
 let rec compile_exp (program: s_exp): directive list =
     match program with
     | Num n ->
+        (* shift left (lsl) = 0b11 << 2 = 0b1100 *)
         [Mov (Reg Rax, Imm (n lsl num_shift))]
-    | Sym "true" -> [Mov (Reg Rax, Imm ((1 lsl bool_shift) lor bool_tag))]
+    | Sym "true" -> [Mov (Reg Rax, Imm ((1 lsl bool_shift) lor bool_tag))] (* shift then bitwise OR *)
     | Sym "false" -> [Mov (Reg Rax, Imm ((0 lsl bool_shift) lor bool_tag))]
     | Lst [Sym "add1"; arg] ->
         compile_exp arg @

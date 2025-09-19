@@ -12,6 +12,8 @@
 extern int64_t entry();
 
 void print_value(uint64_t value){
+    // since we shift left to represent the number in compiler, so 
+    // we need to shift right to return it to the original value
     if ((value & num_mask) == num_tag) {
         int64_t ivalue = (int64_t)value;
         printf("%" PRIi64, ivalue >> num_shift);
